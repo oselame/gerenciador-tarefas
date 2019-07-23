@@ -14,17 +14,23 @@
 
     <div class="container">
         <h3>List of task</h3>
-        <a href="/tasks/insert" class="btn btn-success">Inserir novova Tarefa</a>
+        <a href="/tasks/insert" class="btn btn-success">New Task</a>
         <div th:each="task: ${tasks}" style="margin-top: 10px">
             <div class="card bg-light mb-3">
                 <div class="card-header" th:text="${task.title}"></div>
                 <div class="card-body">
                     <p class="card-text" th:text="${task.description}"></p>
                     <p class="card-text" th:text="${'Expiration: ' + #dates.format(task.expiration)}"></p>
+                    <p class="card-text" style="color: green" th:if="${task.expiration.after(new java.util.Date())}">Pending</p>
+                    <p class="card-text" style="color: red" th:if="${task.expiration.before(new java.util.Date())}">Late</p>
                 </div>
                 <div class="card-footer bg-light">
                     <p>
-                        <a th:href="@{/tasks/update/{id}(id=${task.id})}">Change</a>
+                        <a th:href="@{/tasks/update/{id}(id=${task.id})}">Change</a> |
+                        <a th:href="@{/tasks/delete/{id}(id=${task.id})}">Delete</a>
+                        <span th:if="${!task.completed}"> |
+                            <a  th:href="@{/tasks/completed/{id}(id=${task.id})}">Completed</a>
+                        </span>
                     </p>
                 </div>
             </div>

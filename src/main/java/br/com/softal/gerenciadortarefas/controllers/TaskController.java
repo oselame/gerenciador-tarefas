@@ -1,7 +1,9 @@
 package br.com.softal.gerenciadortarefas.controllers;
 
 import br.com.softal.gerenciadortarefas.models.Task;
+import br.com.softal.gerenciadortarefas.models.User;
 import br.com.softal.gerenciadortarefas.repositories.TaskRepository;
+import br.com.softal.gerenciadortarefas.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 
@@ -21,11 +24,16 @@ public class TaskController {
     @Autowired
     TaskRepository taskRepository;
 
+    @Autowired
+    UserService userService;
+
     @GetMapping("/list")
-    public ModelAndView list() {
+    public ModelAndView list(HttpServletRequest request) {
+        String userEmail = request.getUserPrincipal().getName();
+
         ModelAndView mv = new ModelAndView();
         mv.setViewName("tasks/list");
-        mv.addObject("tasks", taskRepository.findAll());
+        mv.addObject("tasks", taskRepository.findTasksByUserEmail(userEmail));
         return mv;
     }
 
@@ -38,7 +46,7 @@ public class TaskController {
     }
 
     @PostMapping("/insert")
-    public ModelAndView insert(@Valid Task task, BindingResult result) {
+    public ModelAndView insert(@Valid Task task, BindingResult result, HttpServletRequest request) {
         ModelAndView mv = new ModelAndView();
         if (task.getExpiration() == null) {
             result.rejectValue("expiration", "task.expiration.required", "The expiration date is required!");
@@ -50,6 +58,10 @@ public class TaskController {
             mv.setViewName("tasks/insert");
             mv.addObject(task);
         } else {
+            String userEmail = request.getUserPrincipal().getName();
+            User user = userService.getByEmail(userEmail);
+
+            task.setUser(user);
             taskRepository.save(task);
             mv.setViewName("redirect:/tasks/list");
         }
@@ -81,5 +93,19 @@ public class TaskController {
             mv.setViewName("redirect:/tasks/list");
         }
         return mv;
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id) {
+        taskRepository.deleteById(id);
+        return "redirect:/tasks/list";
+    }
+
+    @GetMapping("/completed/{id}")
+    public String completed(@PathVariable("id") Long id) {
+        Task task = taskRepository.getOne(id);
+        task.setCompleted(true);
+        taskRepository.save(task);
+        return "redirect:/tasks/list";
     }
 }

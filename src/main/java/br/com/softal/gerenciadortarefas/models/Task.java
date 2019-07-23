@@ -33,6 +33,10 @@ public class Task implements Serializable {
     @Column(name = "completed", nullable = false)
     private Boolean completed = false;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userid")
+    private User user;
+
     public Long getId() {
         return id;
     }
@@ -71,5 +75,13 @@ public class Task implements Serializable {
 
     public void setCompleted(Boolean completed) {
         this.completed = completed;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
