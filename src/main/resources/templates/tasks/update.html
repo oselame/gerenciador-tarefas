@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Gerenciado de Tarefas - Atualizar a tarefa</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div th:replace="fragments/fragments :: header"></div>
+
+    <div class="container">
+        <h3>Update task</h3>
+        <form class="form-horizontal" action="/tasks/update" method="post" th:object="${task}">
+            <input type="hidden" th:field="*{id}">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <div class="alert alert-danger" role="alert" th:if="*{#fields.hasErrors('title')}">
+                        <label th:errors="*{title}" class="validation-message"/>
+                    </div>
+                    <label>Title</label>
+                    <input type="text" class="form-control" th:field="*{title}" />
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="alert alert-danger" role="alert" th:if="*{#fields.hasErrors('description')}">
+                        <label th:errors="*{description}" class="validation-message"/>
+                    </div>
+                    <label>Description</label>
+                    <input type="text" class="form-control" th:field="*{description}" />
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="alert alert-danger" role="alert" th:if="*{#fields.hasErrors('expiration')}">
+                        <label th:errors="*{expiration}" class="validation-message"/>
+                    </div>
+                    <label>Expiration Date</label>
+                    <input type="date" class="form-control" th:field="*{expiration}" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+
+<script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

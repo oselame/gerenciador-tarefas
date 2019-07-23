@@ -1,0 +1,38 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Gerenciado de Tarefas - Listagem</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div th:replace="fragments/fragments :: header"></div>
+
+    <div class="container">
+        <h3>List of task</h3>
+        <a href="/tasks/insert" class="btn btn-success">Inserir novova Tarefa</a>
+        <div th:each="task: ${tasks}" style="margin-top: 10px">
+            <div class="card bg-light mb-3">
+                <div class="card-header" th:text="${task.title}"></div>
+                <div class="card-body">
+                    <p class="card-text" th:text="${task.description}"></p>
+                    <p class="card-text" th:text="${'Expiration: ' + #dates.format(task.expiration)}"></p>
+                </div>
+                <div class="card-footer bg-light">
+                    <p>
+                        <a th:href="@{/tasks/update/{id}(id=${task.id})}">Change</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
